@@ -10,12 +10,10 @@ import {modal, toast} from "src/partials/state"
 import {
   env,
   pool,
+  pubkey,
   session,
-  follows,
-  loadDeletes,
   loadPubkeys,
   getUserRelayUrls,
-  listenForNotifications,
   getSetting,
   dufflepud,
 } from "src/engine"
@@ -107,21 +105,7 @@ setInterval(() => {
 
 // Synchronization from events to state
 
-export const loadAppData = async () => {
-  const {pubkey} = session.get()
-
-  // Make sure the user and their follows are loaded
-  await loadPubkeys([pubkey], {force: true, kinds: userKinds})
-
-  // Load deletes
-  loadDeletes()
-
-  // Load their network
-  loadPubkeys(Array.from(follows.get()))
-
-  // Start our listener
-  listenForNotifications()
-}
+export const loadAppData = async () => loadPubkeys([pubkey.get()], {force: true, kinds: userKinds})
 
 export const boot = async () => {
   if (env.get().FORCE_RELAYS.length > 0) {
@@ -132,12 +116,9 @@ export const boot = async () => {
       noEscape: true,
     })
 
-    await Promise.all([
-      sleep(1500),
-      loadPubkeys([session.get().pubkey], {force: true, kinds: userKinds}),
-    ])
+    await Promise.all([sleep(1500), loadPubkeys([pubkey.get()], {force: true, kinds: userKinds})])
 
-    navigate("/notes")
+    navigate("/chat")
   } else {
     modal.push({type: "login/connect", noEscape: true})
   }

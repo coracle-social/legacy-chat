@@ -1,46 +1,24 @@
 <script lang="ts">
-  import {identity} from "ramda"
   import {info} from "src/util/logger"
   import {toHex} from "src/util/nostr"
   import {stripProto, ensureProto} from "src/util/misc"
   import {getThemeBackgroundGradient} from "src/partials/state"
-  import Tabs from "src/partials/Tabs.svelte"
   import Anchor from "src/partials/Anchor.svelte"
   import Content from "src/partials/Content.svelte"
-  import Spinner from "src/partials/Spinner.svelte"
   import PersonName from "src/app/shared/PersonName.svelte"
   import PersonActions from "src/app/shared/PersonActions.svelte"
-  import PersonNotes from "src/app/shared/PersonNotes.svelte"
-  import PersonLikes from "src/app/shared/PersonLikes.svelte"
-  import PersonRelays from "src/app/shared/PersonRelays.svelte"
   import PersonHandle from "src/app/shared/PersonHandle.svelte"
   import PersonCircle from "src/app/shared/PersonCircle.svelte"
   import PersonAbout from "src/app/shared/PersonAbout.svelte"
   import PersonStats from "src/app/shared/PersonStats.svelte"
-  import {
-    env,
-    derivePerson,
-    displayPerson,
-    loadPubkeys,
-    imgproxy,
-    getPubkeyRelays,
-    mergeHints,
-    getPubkeyHints,
-  } from "src/engine"
+  import {derivePerson, displayPerson, loadPubkeys, imgproxy} from "src/engine"
 
   export let npub
-  export let relays = []
 
-  const tabs = ["notes", "likes", $env.FORCE_RELAYS.length === 0 && "relays"].filter(identity)
   const pubkey = toHex(npub)
   const person = derivePerson(pubkey)
   const {rgb, rgba} = getThemeBackgroundGradient()
 
-  let activeTab = "notes"
-  let loading = true
-
-  $: ownRelays = getPubkeyRelays(pubkey)
-  $: mergedRelays = mergeHints([relays, getPubkeyHints(pubkey, "write")])
   $: banner = imgproxy($person.profile?.banner, {w: window.innerWidth})
 
   info("Person", npub, $person)
@@ -48,10 +26,6 @@
   loadPubkeys([pubkey], {force: true})
 
   document.title = displayPerson($person)
-
-  const setActiveTab = tab => {
-    activeTab = tab
-  }
 </script>
 
 <div
@@ -93,20 +67,4 @@
       </div>
     </div>
   </div>
-
-  <Tabs {tabs} {activeTab} {setActiveTab} />
-
-  {#if activeTab === "notes"}
-    <PersonNotes {pubkey} relays={mergedRelays} />
-  {:else if activeTab === "likes"}
-    <PersonLikes {pubkey} relays={mergedRelays} />
-  {:else if activeTab === "relays"}
-    {#if ownRelays.length > 0}
-      <PersonRelays relays={ownRelays} />
-    {:else if loading}
-      <Spinner />
-    {:else}
-      <Content size="lg" class="text-center">Unable to show network for this person.</Content>
-    {/if}
-  {/if}
 </Content>

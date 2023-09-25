@@ -32,7 +32,7 @@
 {:else if type === "naddr"}
   <NaddrDetail {...data} />
 {:else if type === "nprofile"}
-  <PersonDetail npub={nip19.npubEncode(data.pubkey)} {relays} />
+  <PersonDetail npub={nip19.npubEncode(data.pubkey)} />
 {:else if type === "npub"}
   <PersonDetail npub={entity} />
 {:else}

@@ -21,7 +21,6 @@
   import Toast from "src/app/Toast.svelte"
   import TopNav from "src/app/TopNav.svelte"
   import Modal from "src/app/Modal.svelte"
-  import ForegroundButtons from "src/app/ForegroundButtons.svelte"
 
   const TypedRouter = Router as ComponentType<SvelteComponentTyped>
 
@@ -149,7 +148,6 @@
     <div use:links>
       {#key $stateKey}
         <Routes />
-        <ForegroundButtons />
         <SideNav />
         <TopNav />
       {/key}

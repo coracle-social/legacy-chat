@@ -15,7 +15,7 @@
     // Give them a moment to see the state transition. IndexedDB
     // also apparently needs some time
     setTimeout(() => {
-      window.location.href = "/notes"
+      window.location.href = "/chat"
     }, 1000)
   }
 

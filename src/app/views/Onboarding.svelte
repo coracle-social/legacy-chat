@@ -79,7 +79,7 @@
     modal.clear()
 
     // Go to our home page
-    navigate("/notes")
+    navigate("/chat")
   }
 
   onMount(() => {
